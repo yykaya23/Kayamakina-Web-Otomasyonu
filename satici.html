@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Satıcı Paneli | Kaya Makina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-100 flex h-screen overflow-hidden font-sans">
+
+    <aside class="w-64 bg-slate-800 text-white flex flex-col shadow-2xl z-20">
+        <div class="p-6 border-b border-slate-700 text-center">
+            <h1 class="text-xl font-black tracking-widest text-green-400">SATICI PORTALI</h1>
+            <p class="text-xs text-slate-400 mt-1 uppercase">{{ session['ad_soyad'] }}</p>
+        </div>
+        <nav class="flex-grow p-4 flex flex-col space-y-2">
+            <a href="/satici" class="flex items-center gap-3 bg-green-600 text-white p-3 rounded-lg font-bold shadow-md">
+                <i class="fa-solid fa-boxes-stacked"></i> Sizin Yükledikleriniz
+            </a>
+            <a href="/" target="_blank" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-700 p-3 rounded-lg font-bold transition">
+                <i class="fa-solid fa-store"></i> Vitrine Git
+            </a>
+            
+            <a href="/cikis" class="flex items-center gap-3 text-red-400 hover:text-white hover:bg-red-500 p-3 rounded-lg font-bold transition mt-auto">
+                <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
+            </a>
+        </nav>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-8 relative">
+        <div class="max-w-6xl mx-auto">
+            
+            <header class="mb-8 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black text-slate-800">Hoş Geldin, {{ session['ad_soyad'] }}</h2>
+                    <p class="text-slate-500 font-medium">Sisteme yüklediğiniz ilanları buradan yönetebilirsiniz.</p>
+                </div>
+                <div class="bg-green-100 text-green-800 px-4 py-2 rounded-lg font-bold text-sm">
+                    Sizin İlanlarınız: {{ makineler|length }}
+                </div>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-8 p-4 rounded-xl text-sm font-bold flex items-center shadow-md animate-bounce
+                            {% if category == 'success' %} bg-green-100 text-green-800 border-l-4 border-green-500
+                            {% elif category == 'error' %} bg-red-100 text-red-800 border-l-4 border-red-500
+                            {% else %} bg-blue-100 text-blue-800 border-l-4 border-blue-500 {% endif %}">
+                            <i class="fa-solid {% if category == 'success' %}fa-circle-check{% else %}fa-circle-exclamation{% endif %} mr-3 text-2xl"></i> 
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-10 border-t-4 border-t-green-500">
+                <h3 class="text-lg font-bold text-slate-800 border-b pb-3 mb-5"><i class="fa-solid fa-plus-circle text-green-600 mr-2"></i> Yeni Makine İlanı Ekle</h3>
+                
+                <form action="/satici/ekle" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Kategori</label>
+                        <select name="kategori_id" class="w-full p-3 border rounded-lg bg-slate-50 outline-none font-medium" required>
+                            <option value="">Seçiniz...</option>
+                            {% for kategori in kategoriler %}
+                                <option value="{{ kategori.id }}">{{ kategori.kategori_adi }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Makine Adı</label>
+                        <input type="text" name="makine_adi" class="w-full p-3 border rounded-lg bg-slate-50 outline-none font-medium" required>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fiyat</label>
+                        <input type="number" name="fiyat" class="w-full p-3 border rounded-lg bg-slate-50 outline-none font-medium" required>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Birim & Yıl</label>
+                        <div class="flex gap-2">
+                            <select name="para_birimi" class="w-1/2 p-3 border rounded-lg bg-slate-50 outline-none font-medium" required>
+                                <option value="TL">TL</option><option value="EUR">EUR</option>
+                            </select>
+                            <input type="text" name="model_yili" class="w-1/2 p-3 border rounded-lg bg-slate-50 outline-none font-medium" required>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Makine Fotoğrafı</label>
+                        <input type="file" name="foto" accept=".jpg, .jpeg, .png" class="w-full p-2 border rounded-lg bg-slate-50 text-xs font-medium">
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <button type="submit" class="w-full bg-green-600 text-white p-3 rounded-lg font-bold hover:bg-green-700 transition shadow-md">İlanı Yayınla</button>
+                    </div>
+                </form>
+            </div>
+
+            <h3 class="text-xl font-black text-slate-800 mb-4 uppercase tracking-tight">Sizin Yükledikleriniz</h3>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-widest border-b">
+                            <th class="p-4 font-bold">Vitrin ID</th>
+                            <th class="p-4 font-bold">Kategori</th>
+                            <th class="p-4 font-bold">Makine Adı</th>
+                            <th class="p-4 font-bold">Fiyat</th>
+                            <th class="p-4 font-bold text-right">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm font-medium text-slate-700">
+                        {% if makineler %}
+                            {% for makine in makineler %}
+                            <tr class="border-b hover:bg-slate-50 transition">
+                                <td class="p-4 text-slate-400">#00{{ makine.id }}</td>
+                                <td class="p-4"><span class="bg-slate-200 text-slate-700 px-2 py-1 rounded text-xs font-bold">{{ makine.kategori_adi }}</span></td>
+                                <td class="p-4 text-blue-900 font-bold">{{ makine.makine_adi }}</td>
+                                <td class="p-4">{{ "{:,.0f}".format(makine.fiyat) }} {{ makine.para_birimi }}</td>
+                                <td class="p-4 text-right">
+                                    <form action="/satici/sil/{{ makine.id }}" method="POST" onsubmit="return confirm('Bu ilanınızı silmek istediğinize emin misiniz?');">
+                                        <button type="submit" class="text-red-500 hover:text-white hover:bg-red-500 border border-red-500 px-3 py-1 rounded transition text-xs font-bold uppercase">Sil</button>
+                                    </form>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        {% else %}
+                            <tr>
+                                <td colspan="5" class="p-8 text-center text-slate-400 italic font-medium">Henüz sisteme bir makine yüklemediniz.</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+</body>
+</html>
