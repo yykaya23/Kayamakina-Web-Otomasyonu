@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>{{ makine.makine_adi }} | Teknik Detaylar</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <style>
+        body { transition: background-color 0.4s, color 0.4s; }
+    </style>
+</head>
+<body class="bg-sky-50 dark:bg-slate-900 text-sky-950 dark:text-slate-300 font-sans leading-relaxed selection:bg-blue-500 selection:text-white transition-colors duration-500">
+
+    <nav class="bg-sky-100/90 dark:bg-slate-950/80 backdrop-blur-md text-sky-950 dark:text-white p-4 shadow-lg dark:shadow-2xl sticky top-0 z-50 border-b border-sky-200 dark:border-slate-800 transition-colors duration-300">
+        <div class="container mx-auto flex justify-between items-center">
+            <a href="/" class="text-sm font-bold uppercase tracking-tighter hover:text-blue-600 dark:hover:text-blue-400 transition-colors flex items-center">
+                <i class="fa-solid fa-chevron-left mr-2"></i> Vitrine Geri Dön
+            </a>
+            
+            <div class="flex items-center gap-4">
+                <div class="text-xs font-black tracking-[0.3em] text-blue-600 dark:text-blue-500 hidden md:block drop-shadow-sm">KAYA MAKİNA INDUSTRIAL SOLUTIONS</div>
+                
+                <button id="theme-toggle" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-sky-600 dark:text-yellow-400 hover:bg-sky-50 dark:hover:bg-slate-700 transition-colors shadow border border-sky-200 dark:border-slate-700">
+                    <i id="theme-toggle-dark-icon" class="hidden fa-solid fa-moon text-lg"></i>
+                    <i id="theme-toggle-light-icon" class="hidden fa-solid fa-sun text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-10">
+        <div class="bg-white/80 dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 rounded-2xl shadow-xl dark:shadow-[0_20px_50px_rgba(0,0,0,0.5)] flex flex-col lg:flex-row overflow-hidden border border-sky-200 dark:border-slate-700/50 backdrop-blur-md transition-colors duration-300">
+            
+            <div class="lg:w-2/5 bg-sky-100 dark:bg-slate-950 border-r border-sky-200 dark:border-slate-700/50 relative group overflow-hidden min-h-[400px]">
+                <img src="{{ url_for('static', filename='images/' ~ makine.id ~ '.jpg') }}" class="absolute inset-0 w-full h-full object-cover opacity-90 group-hover:opacity-100 z-10 transition-transform duration-1000 group-hover:scale-110" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+                
+                <div class="h-full w-full flex flex-col items-center justify-center p-12 relative z-0 bg-sky-50 dark:bg-slate-900" style="display: none;">
+                    <i class="fa-solid fa-industry text-[12rem] text-sky-200 dark:text-slate-800"></i>
+                    <div class="mt-8 bg-white dark:bg-slate-950 text-sky-600 dark:text-slate-400 border border-sky-200 dark:border-slate-800 px-4 py-1 text-xs font-bold uppercase shadow-sm">Görsel Yüklenmemiş</div>
+                </div>
+            </div>
+
+            <div class="lg:w-3/5 p-10 lg:p-16 relative">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-400/10 dark:bg-blue-500/5 rounded-full blur-3xl -z-10"></div>
+
+                <div class="mb-10 relative z-10">
+                    <div class="flex items-center gap-3 mb-4">
+                        <span class="bg-blue-100 dark:bg-blue-600/20 border border-blue-200 dark:border-blue-500/30 text-blue-700 dark:text-blue-400 px-3 py-1 text-[10px] font-bold tracking-widest uppercase rounded-md">{{ makine.kategori_adi }}</span>
+                        <span class="text-sky-600 dark:text-slate-500 font-bold text-sm italic">ID: #00{{ makine.id }}</span>
+                    </div>
+                    <h1 class="text-4xl font-black text-sky-950 dark:text-white uppercase tracking-tight mb-4 drop-shadow-sm">{{ makine.makine_adi }}</h1>
+                    <p class="text-2xl font-light text-blue-700 dark:text-blue-400 tracking-tight italic border-l-4 border-blue-500 pl-4">{{ makine.teknik_aciklama }}</p>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-4 mb-12 relative z-10">
+                    <div class="flex justify-between border-b border-sky-100 dark:border-slate-700/50 py-3">
+                        <span class="text-sky-700 dark:text-slate-400 text-xs font-bold uppercase">Üretim Yılı</span>
+                        <span class="font-bold text-sky-950 dark:text-slate-200">{{ makine.model_yili }}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-sky-100 dark:border-slate-700/50 py-3">
+                        <span class="text-sky-700 dark:text-slate-400 text-xs font-bold uppercase">Kondisyon</span>
+                        <span class="font-bold text-emerald-600 dark:text-emerald-400">{{ makine.durum }}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-sky-100 dark:border-slate-700/50 py-3">
+                        <span class="text-sky-700 dark:text-slate-400 text-xs font-bold uppercase">Motor Gücü</span>
+                        <span class="font-bold text-sky-950 dark:text-slate-200">{{ makine.motor_gucu }}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-sky-100 dark:border-slate-700/50 py-3">
+                        <span class="text-sky-700 dark:text-slate-400 text-xs font-bold uppercase">Devir Aralığı</span>
+                        <span class="font-bold text-sky-950 dark:text-slate-200">{{ makine.devir_araligi }}</span>
+                    </div>
+                    <div class="flex justify-between border-b border-sky-100 dark:border-slate-700/50 py-3 col-span-1 md:col-span-2">
+                        <span class="text-sky-700 dark:text-slate-400 text-xs font-bold uppercase">Kapasite / Ölçü</span>
+                        <span class="font-bold text-blue-700 dark:text-blue-400">{{ makine.kapasite }}</span>
+                    </div>
+                </div>
+
+                <div class="bg-sky-100/50 dark:bg-slate-950/50 border-l-4 border-blue-500 p-6 mb-12 rounded-r-xl relative z-10 shadow-sm">
+                    <h4 class="text-xs font-black uppercase tracking-widest mb-2 text-blue-700 dark:text-blue-400 flex items-center"><i class="fa-solid fa-robot mr-2"></i> Uzman Yorumu</h4>
+                    <p class="text-sky-900 dark:text-slate-300 font-medium italic">"{{ makine.neden_almalisiniz }}"</p>
+                </div>
+
+                <div class="flex flex-col md:flex-row items-center justify-between gap-8 pt-8 border-t border-sky-200 dark:border-slate-700/50 relative z-10">
+                    <div class="text-center md:text-left">
+                        <span class="text-[10px] font-black uppercase text-sky-600 dark:text-slate-500 block mb-1">Peşin Satış Fiyatı</span>
+                        <span class="text-5xl font-black text-sky-950 dark:text-white tracking-tighter drop-shadow-sm">
+                            {% if makine.para_birimi == 'EUR' %}€{% endif %}
+                            {{ "{:,.0f}".format(makine.fiyat) }}
+                            {% if makine.para_birimi == 'TL' %}TL{% endif %}
+                        </span>
+                    </div>
+                    <div class="flex gap-4 w-full md:w-auto">
+                        <button onclick="teklifIste('{{ makine.makine_adi|replace("'", "\\'") }}', '{{ makine['satici_telefon'] if 'satici_telefon' in makine.keys() and makine['satici_telefon'] else '905324876093' }}')" class="bg-emerald-600 hover:bg-emerald-500 text-white px-8 py-4 rounded-xl font-bold transition-all duration-300 flex items-center shadow-lg dark:shadow-[0_0_20px_rgba(16,185,129,0.3)] hover:-translate-y-1 uppercase tracking-widest text-sm">
+                            <i class="fa-brands fa-whatsapp mr-2 text-xl"></i> TEKLİF AL
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mt-16 bg-white/60 dark:bg-slate-900 p-10 lg:p-12 rounded-2xl shadow-lg dark:shadow-[0_10px_30px_rgba(0,0,0,0.3)] border border-sky-200 dark:border-slate-800 relative overflow-hidden transition-colors duration-300">
+            
+            <div class="flex items-center gap-4 mb-10 relative z-10">
+                <div class="bg-blue-100 dark:bg-blue-500/10 p-4 rounded-2xl border border-blue-200 dark:border-blue-500/20">
+                    <i class="fa-solid fa-screwdriver-wrench text-2xl text-blue-600 dark:text-blue-400"></i>
+                </div>
+                <div>
+                    <h3 class="text-2xl font-black text-sky-950 dark:text-white uppercase tracking-tight drop-shadow-sm">Önerilen Yedek Parçalar</h3>
+                    <p class="text-sky-700 dark:text-slate-400 font-medium text-sm mt-1">Bu makine ile %100 uyumlu orijinal servis ekipmanları</p>
+                </div>
+            </div>
+
+            {% if yedek_parcalar %}
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 relative z-10">
+                {% for parca in yedek_parcalar %}
+                <div class="bg-white/90 dark:bg-slate-800/50 backdrop-blur-sm border border-sky-200 dark:border-slate-700 rounded-2xl p-6 hover:shadow-xl dark:hover:shadow-[0_10px_30px_rgba(59,130,246,0.1)] transition-all duration-300 group flex flex-col justify-between hover:-translate-y-2 hover:border-blue-400 dark:hover:border-blue-500/50">
+                    <div>
+                        <div class="flex justify-between items-start mb-4">
+                            <span class="bg-blue-50 dark:bg-slate-900 text-blue-600 dark:text-blue-400 border border-blue-200 dark:border-blue-500/30 text-[10px] font-black px-3 py-1 rounded-full uppercase tracking-widest">Orijinal Parça</span>
+                            {% if parca.stok_durumu == 'Stokta' %}
+                                <span class="text-emerald-600 dark:text-emerald-400 text-xs font-bold"><i class="fa-solid fa-circle-check mr-1"></i> Stokta</span>
+                            {% else %}
+                                <span class="text-amber-600 dark:text-amber-500 text-xs font-bold"><i class="fa-solid fa-clock mr-1"></i> {{ parca.stok_durumu }}</span>
+                            {% endif %}
+                        </div>
+                        <h4 class="font-bold text-sky-950 dark:text-slate-200 text-lg mb-2 group-hover:text-blue-600 dark:group-hover:text-blue-300 transition-colors">{{ parca.parca_adi }}</h4>
+                    </div>
+                    <div class="mt-6 pt-4 border-t border-sky-100 dark:border-slate-700/50 flex justify-between items-center">
+                        <span class="text-xl font-black text-sky-900 dark:text-white drop-shadow-sm">{% if parca.para_birimi == 'EUR' %}€{% endif %}{{ "{:,.0f}".format(parca.fiyat) }}{% if parca.para_birimi == 'TL' %}TL{% endif %}</span>
+                        
+                        <button onclick="teklifIste('{{ parca.parca_adi|replace("'", "\\'") }} (Yedek Parça)', '{{ makine['satici_telefon'] if 'satici_telefon' in makine.keys() and makine['satici_telefon'] else '905324876093' }}')" class="text-blue-600 dark:text-blue-400 hover:text-white hover:bg-blue-600 border border-blue-300 dark:border-blue-600/50 hover:border-blue-600 px-4 py-2 rounded-xl text-xs font-bold uppercase transition-all duration-300">Bilgi Al</button>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            {% else %}
+            <div class="bg-white/50 dark:bg-slate-800/30 border border-dashed border-sky-300 dark:border-slate-700 rounded-2xl p-10 text-center relative z-10">
+                <i class="fa-solid fa-box-open text-5xl text-sky-300 dark:text-slate-600 mb-4"></i>
+                <p class="text-sky-700 dark:text-slate-400 font-medium text-lg">Bu makine için henüz sisteme yedek parça işlenmemiştir.</p>
+            </div>
+            {% endif %}
+        </div>
+    </main>
+
+    <footer class="bg-sky-200 dark:bg-black text-sky-700 dark:text-slate-600 text-center py-10 text-[10px] font-bold tracking-[0.4em] uppercase border-t border-sky-300 dark:border-slate-800 mt-10 transition-colors duration-500">
+        Kaya Makina Heavy Industry Distribution Center &copy; 2026
+    </footer>
+
+    <script>
+        // MÜŞTERİNİN TEMA SEÇİMİNİ HATIRLAMA MANTIĞI
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+
+        const themeToggleBtn = document.getElementById('theme-toggle');
+
+        themeToggleBtn.addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+
+        // SENİN YAZDIĞIN HATASIZ WHATSAPP FONKSİYONU
+        function teklifIste(urunAdi, telefonNumarasi) {
+            telefonNumarasi = telefonNumarasi || '905324876093';
+            Swal.fire({
+                title: 'WhatsApp İletişimi',
+                text: urunAdi + ' hakkında satıcıdan detaylı bilgi ve fiyat almak istiyor musunuz?',
+                icon: 'question',
+                showCancelButton: true,
+                confirmButtonText: '<i class="fa-brands fa-whatsapp mr-1"></i> Evet, Mesaj At',
+                cancelButtonText: 'İptal',
+                confirmButtonColor: '#10b981', 
+                cancelButtonColor: '#64748b'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    window.location.href = 'https://wa.me/' + telefonNumarasi + '?text=' + encodeURIComponent('Merhaba, web sitenizdeki ' + urunAdi + ' hakkında detaylı bilgi almak istiyorum.');
+                }
+            });
+        }
+    </script>
+</body>
+</html>
