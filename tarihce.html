@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="tr" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tarihçe ve Bilgi Merkezi | Kaya Makina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        tailwind.config = { darkMode: 'class' };
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+        } else {
+            document.documentElement.classList.remove('dark');
+        }
+    </script>
+
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" rel="stylesheet">
+    <style> body { animation: fadeIn 0.8s ease-in-out; transition: background-color 0.4s, color 0.4s; } @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } } </style>
+</head>
+<body class="bg-sky-50 dark:bg-slate-900 text-sky-950 dark:text-slate-300 font-sans selection:bg-blue-500 selection:text-white bg-[url('https://www.transparenttextures.com/patterns/cubes.png')] flex flex-col min-h-screen">
+
+    <nav class="bg-sky-100/90 dark:bg-slate-950/80 backdrop-blur-md text-sky-950 dark:text-white p-5 shadow-lg dark:shadow-2xl sticky top-0 z-50 border-b border-sky-200 dark:border-slate-800 transition-colors duration-300">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-2xl font-black tracking-wider text-sky-900 dark:text-white drop-shadow-sm dark:drop-shadow-md">
+                <i class="fa-solid fa-industry mr-2 text-blue-600 dark:text-blue-500"></i> KAYA MAKİNA
+            </h1>
+            <div class="flex items-center space-x-6 font-semibold">
+                <a href="/" class="hover:text-blue-500 transition-colors duration-300 text-sm uppercase tracking-widest hidden md:inline-block"><i class="fa-solid fa-arrow-left mr-1"></i> Vitrine Dön</a>
+                <button id="theme-toggle" class="w-10 h-10 rounded-full bg-white dark:bg-slate-800 flex items-center justify-center text-sky-600 dark:text-yellow-400 hover:bg-sky-100 dark:hover:bg-slate-700 transition-colors shadow border border-sky-200 dark:border-slate-700">
+                    <i id="theme-toggle-dark-icon" class="hidden fa-solid fa-moon text-lg"></i>
+                    <i id="theme-toggle-light-icon" class="hidden fa-solid fa-sun text-lg"></i>
+                </button>
+            </div>
+        </div>
+    </nav>
+
+    <main class="container mx-auto px-4 py-12 flex-grow">
+        
+        <div class="bg-white/80 dark:bg-gradient-to-br dark:from-slate-800 dark:to-slate-900 rounded-3xl shadow-xl border border-sky-200 dark:border-slate-700/80 overflow-hidden relative backdrop-blur-md transition-colors duration-300 mb-12">
+            
+            <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 rounded-full blur-3xl -z-0"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-emerald-500/10 rounded-full blur-3xl -z-0"></div>
+
+            <div class="p-8 lg:p-12 relative z-10 flex flex-col lg:flex-row gap-8 items-center">
+                <div class="lg:w-1/2">
+                    <span class="bg-blue-100/50 dark:bg-blue-500/10 border border-blue-200 dark:border-blue-500/30 text-blue-700 dark:text-blue-400 text-[10px] font-black px-4 py-1.5 rounded-full uppercase tracking-widest mb-4 inline-block shadow-sm"><i class="fa-solid fa-graduation-cap mr-1"></i> Sanayi 101</span>
+                    <h2 class="text-3xl lg:text-4xl font-black text-sky-950 dark:text-white uppercase tracking-tight mb-4">Endüstriyel Terimleri <br> <span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-cyan-500 dark:from-blue-400 dark:to-emerald-400">Yapay Zekaya Sorun</span></h2>
+                    <p class="text-sky-700 dark:text-slate-400 leading-relaxed mb-6 font-medium">
+                        "Torna nedir?", "Freze ne işe yarar?", "CNC teknolojisi nasıl çalışır?" Sanayi makineleriyle ilgili aklınıza takılan tüm teknik soruları asistanımıza sorabilirsiniz.
+                    </p>
+                    
+                    <div class="bg-sky-50 dark:bg-slate-950 p-2 rounded-2xl flex items-center shadow-inner border border-sky-200 dark:border-slate-800">
+                        <input type="text" id="egitim-input" placeholder="Örn: Pres makinesi ne işe yarar?" class="w-full bg-transparent border-none px-4 py-3 outline-none text-sky-950 dark:text-white placeholder-sky-400 dark:placeholder-slate-500 font-medium">
+                        <button onclick="egitimSorusuSor()" id="egitim-btn" class="bg-blue-600 hover:bg-blue-500 text-white px-6 py-3 rounded-xl font-bold transition-all shadow-md flex items-center">
+                            <i class="fa-solid fa-sparkles mr-2"></i> Sor
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="lg:w-1/2 w-full h-[300px] bg-sky-50 dark:bg-slate-950 rounded-2xl border border-sky-200 dark:border-slate-700 p-6 overflow-y-auto flex flex-col shadow-inner" id="egitim-cevap-kutusu">
+                    <div class="bg-blue-100/50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-4 rounded-xl text-sky-900 dark:text-slate-300 text-sm font-medium self-start w-5/6">
+                        <i class="fa-solid fa-robot text-blue-600 dark:text-blue-400 mb-2 block text-lg"></i>
+                        Merhaba! Ben Kaya Makina Teknik Bilgi asistanıyım. Endüstriyel makinelerle ilgili öğrenmek istediğiniz teknik bir terim varsa dinliyorum.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-8 mt-16">
+            <h3 class="text-3xl font-black text-sky-950 dark:text-white uppercase tracking-tight text-center">Temel Makine <span class="text-blue-600 dark:text-blue-400">Terimleri</span></h3>
+            <p class="text-center text-sky-700 dark:text-slate-400 mt-2">Sektörün kalbini oluşturan temel takım tezgahları.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-sky-200 dark:border-slate-700 overflow-hidden flex flex-col lg:flex-row group">
+                <div class="lg:w-2/5 h-48 lg:h-auto bg-slate-200 relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1565439390236-476722bcbd6d?auto=format&fit=crop&w=500&q=80" alt="Torna Makinesi" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-90">
+                    <div class="absolute inset-0 bg-blue-900/20 group-hover:bg-transparent transition-colors"></div>
+                </div>
+                <div class="p-6 lg:w-3/5 flex flex-col justify-center">
+                    <h4 class="text-2xl font-black text-sky-950 dark:text-white uppercase">Torna</h4>
+                    <span class="text-xs font-bold text-blue-600 dark:text-blue-400 uppercase tracking-widest mb-3 block">"Makinelerin Anası"</span>
+                    <p class="text-sky-800 dark:text-slate-300 text-sm leading-relaxed">Parça kendi ekseni etrafında dönerken, sabit bir kesici uca temas ettirilerek şekillendirilir. Mil ve silindirik parçalar üretmek içindir.</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-sky-200 dark:border-slate-700 overflow-hidden flex flex-col lg:flex-row group">
+                <div class="lg:w-2/5 h-48 lg:h-auto bg-slate-200 relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1504917595217-d4dc5ebe6122?auto=format&fit=crop&w=500&q=80" alt="Freze Makinesi" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-90">
+                    <div class="absolute inset-0 bg-emerald-900/20 group-hover:bg-transparent transition-colors"></div>
+                </div>
+                <div class="p-6 lg:w-3/5 flex flex-col justify-center">
+                    <h4 class="text-2xl font-black text-sky-950 dark:text-white uppercase">Freze</h4>
+                    <span class="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase tracking-widest mb-3 block">"Kusursuz Yüzeyler"</span>
+                    <p class="text-sky-800 dark:text-slate-300 text-sm leading-relaxed">Torna mantığının tersidir. Parça sabittir, kesici uç döner. Kalıp çıkarmak, düz yüzey elde etmek ve dişli çark açmak için kullanılır.</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-sky-200 dark:border-slate-700 overflow-hidden flex flex-col lg:flex-row group">
+                <div class="lg:w-2/5 h-48 lg:h-auto bg-slate-200 relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1581092334651-ddf26d9a09d0?auto=format&fit=crop&w=500&q=80" alt="CNC Teknolojisi" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-90">
+                    <div class="absolute inset-0 bg-amber-900/20 group-hover:bg-transparent transition-colors"></div>
+                </div>
+                <div class="p-6 lg:w-3/5 flex flex-col justify-center">
+                    <h4 class="text-2xl font-black text-sky-950 dark:text-white uppercase">CNC</h4>
+                    <span class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-widest mb-3 block">"Bilgisayarlı Beyin"</span>
+                    <p class="text-sky-800 dark:text-slate-300 text-sm leading-relaxed">Makinelerin insan eliyle değil, yazılım kodlarıyla (G-Code) yönetilmesidir. Mikronluk hata payıyla kusursuz seri üretim sağlar.</p>
+                </div>
+            </div>
+
+            <div class="bg-white dark:bg-slate-800 rounded-3xl shadow-lg border border-sky-200 dark:border-slate-700 overflow-hidden flex flex-col lg:flex-row group">
+                <div class="lg:w-2/5 h-48 lg:h-auto bg-slate-200 relative overflow-hidden">
+                    <img src="https://images.unsplash.com/photo-1533090161767-e6ffed986c88?auto=format&fit=crop&w=500&q=80" alt="Pres Makinesi" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700 opacity-90">
+                    <div class="absolute inset-0 bg-purple-900/20 group-hover:bg-transparent transition-colors"></div>
+                </div>
+                <div class="p-6 lg:w-3/5 flex flex-col justify-center">
+                    <h4 class="text-2xl font-black text-sky-950 dark:text-white uppercase">Pres</h4>
+                    <span class="text-xs font-bold text-purple-600 dark:text-purple-400 uppercase tracking-widest mb-3 block">"Devasa Basınç"</span>
+                    <p class="text-sky-800 dark:text-slate-300 text-sm leading-relaxed">Tonlarca hidrolik veya mekanik gücü tek noktaya uygulayarak metali keser, büker veya ezer. Araba kaportası gibi işler için tasarlanmıştır.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="bg-sky-100/50 dark:bg-slate-800/30 rounded-3xl p-8 border border-sky-200 dark:border-slate-700">
+            <h3 class="text-2xl font-black text-sky-950 dark:text-white uppercase tracking-tight mb-2"><i class="fa-solid fa-comments text-blue-500 mr-2"></i> Geliştirme Önerileri & Yorumlar</h3>
+            <p class="text-sm text-sky-700 dark:text-slate-400 mb-6">Sizce bu platforma veya sanayi sözlüğüne başka neler eklemeliyiz? Tavsiyelerinizi aşağıya bırakabilirsiniz.</p>
+            
+            <div class="flex flex-col md:flex-row gap-4 mb-8">
+                <input type="text" id="yorum-isim" value="{{ session.get('ad_soyad', '') }}" placeholder="İsminiz (Opsiyonel)" class="md:w-1/4 bg-white dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-xl px-4 py-3 outline-none focus:ring-1 focus:ring-blue-500 text-sky-950 dark:text-white">
+                <input type="text" id="yorum-metin" placeholder="Önerinizi veya yorumunuzu yazın..." class="md:w-2/4 flex-grow bg-white dark:bg-slate-900 border border-sky-200 dark:border-slate-700 rounded-xl px-4 py-3 outline-none focus:ring-1 focus:ring-blue-500 text-sky-950 dark:text-white">
+                <button onclick="yorumEkle()" class="md:w-1/4 bg-sky-900 hover:bg-sky-800 dark:bg-blue-600 dark:hover:bg-blue-500 text-white font-bold px-6 py-3 rounded-xl transition-colors">Gönder</button>
+            </div>
+
+            <div id="yorum-listesi" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-sky-100 dark:border-slate-700">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-user-shield text-blue-500"></i>
+                        <span class="font-bold text-sky-900 dark:text-white text-sm">Sistem Yöneticisi</span>
+                    </div>
+                    <p class="text-sky-800 dark:text-slate-300 text-sm">İlk yorum Kaya Makina'dan! Platformumuzu geliştirmek için değerli tavsiyelerinizi bekliyoruz.</p>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="bg-sky-200 dark:bg-black text-sky-700 dark:text-slate-600 text-center py-6 text-[10px] font-bold tracking-[0.5em] uppercase border-t border-sky-300 dark:border-slate-900 transition-colors duration-500 mt-auto">
+        Kaya Makina Heavy Industry © 2026
+    </footer>
+
+    <script>
+        // Tema Değiştirici
+        const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+        const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+        if (localStorage.getItem('color-theme') === 'dark' || (!('color-theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            themeToggleLightIcon.classList.remove('hidden');
+        } else {
+            themeToggleDarkIcon.classList.remove('hidden');
+        }
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        themeToggleBtn.addEventListener('click', function() {
+            themeToggleDarkIcon.classList.toggle('hidden');
+            themeToggleLightIcon.classList.toggle('hidden');
+            if (localStorage.getItem('color-theme')) {
+                if (localStorage.getItem('color-theme') === 'light') {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                } else {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                }
+            } else {
+                if (document.documentElement.classList.contains('dark')) {
+                    document.documentElement.classList.remove('dark');
+                    localStorage.setItem('color-theme', 'light');
+                } else {
+                    document.documentElement.classList.add('dark');
+                    localStorage.setItem('color-theme', 'dark');
+                }
+            }
+        });
+
+        // 1. EĞİTİM ASİSTANI (YAPAY ZEKA) MANTIĞI
+        async function egitimSorusuSor() {
+            const input = document.getElementById('egitim-input');
+            const soru = input.value.trim();
+            if(!soru) return;
+
+            const kutu = document.getElementById('egitim-cevap-kutusu');
+            
+            // Kullanıcının sorusunu ekle
+            kutu.innerHTML += `
+                <div class="bg-white dark:bg-slate-800 border border-sky-200 dark:border-slate-700 p-3 rounded-xl text-sky-950 dark:text-white text-sm font-medium self-end w-4/5 mt-4 shadow-sm">
+                    ${soru}
+                </div>`;
+            
+            input.value = '';
+            kutu.scrollTop = kutu.scrollHeight;
+
+            // Düşünüyor animasyonu
+            const typingId = 'typing-' + Date.now();
+            kutu.innerHTML += `
+                <div id="${typingId}" class="bg-blue-100/50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-3 rounded-xl text-sky-900 dark:text-slate-400 text-sm font-medium self-start w-1/2 mt-4 flex gap-1">
+                    <i class="fa-solid fa-circle-notch fa-spin text-blue-500"></i> Yanıt hazırlanıyor...
+                </div>`;
+            kutu.scrollTop = kutu.scrollHeight;
+
+            // Arka plandaki API'ye soruyu gönderiyoruz
+            try {
+                const response = await fetch('/api/chat', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ mesaj: "Lütfen şu teknik soruya sanayi bağlamında kısa, eğitici ve net bir cevap ver: " + soru })
+                });
+                const data = await response.json();
+                
+                document.getElementById(typingId).remove();
+                kutu.innerHTML += `
+                    <div class="bg-blue-100/50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-500/30 p-4 rounded-xl text-sky-900 dark:text-slate-300 text-sm font-medium self-start w-5/6 mt-4 shadow-sm leading-relaxed">
+                        <i class="fa-solid fa-robot text-blue-600 dark:text-blue-400 mb-2 block"></i>
+                        ${data.cevap}
+                    </div>`;
+            } catch (error) {
+                document.getElementById(typingId).remove();
+                kutu.innerHTML += `<div class="text-red-500 text-xs mt-2 self-start">Bağlantı hatası oluştu.</div>`;
+            }
+            kutu.scrollTop = kutu.scrollHeight;
+        }
+
+        document.getElementById('egitim-input').addEventListener('keypress', function (e) {
+            if (e.key === 'Enter') egitimSorusuSor();
+        });
+
+
+        // 2. YORUM / ÖNERİ PANOSU MANTIĞI (Veritabanı gerektirmeden tarayıcıda tutar)
+        function yorumlariYukle() {
+            const kaydedilenler = JSON.parse(localStorage.getItem('makina_yorumlari') || '[]');
+            const liste = document.getElementById('yorum-listesi');
+            
+            kaydedilenler.forEach(y => {
+                liste.innerHTML += `
+                    <div class="bg-white dark:bg-slate-800 p-5 rounded-2xl shadow-sm border border-sky-100 dark:border-slate-700 animation-fadeIn">
+                        <div class="flex items-center gap-2 mb-2">
+                            <i class="fa-solid fa-user text-sky-400 dark:text-slate-500"></i>
+                            <span class="font-bold text-sky-900 dark:text-white text-sm">${y.isim}</span>
+                        </div>
+                        <p class="text-sky-800 dark:text-slate-300 text-sm">${y.metin}</p>
+                    </div>`;
+            });
+        }
+
+        function yorumEkle() {
+            const isimInput = document.getElementById('yorum-isim');
+            const metinInput = document.getElementById('yorum-metin');
+            const isim = isimInput.value.trim() || 'Ziyaretçi';
+            const metin = metinInput.value.trim();
+
+            if(!metin) return alert("Lütfen bir yorum yazın!");
+
+            const yeniYorum = { isim: isim, metin: metin };
+            const kaydedilenler = JSON.parse(localStorage.getItem('makina_yorumlari') || '[]');
+            
+            kaydedilenler.unshift(yeniYorum); // En başa ekle
+            localStorage.setItem('makina_yorumlari', JSON.stringify(kaydedilenler));
+
+            const liste = document.getElementById('yorum-listesi');
+            liste.innerHTML = `
+                <div class="bg-sky-50 dark:bg-blue-900/20 p-5 rounded-2xl shadow-md border border-blue-200 dark:border-blue-500/30">
+                    <div class="flex items-center gap-2 mb-2">
+                        <i class="fa-solid fa-user-check text-blue-500"></i>
+                        <span class="font-bold text-sky-900 dark:text-white text-sm">${isim}</span>
+                    </div>
+                    <p class="text-sky-800 dark:text-slate-300 text-sm">${metin}</p>
+                </div>` + liste.innerHTML;
+
+            metinInput.value = '';
+        }
+
+        // Sayfa açıldığında eski yorumları ekrana diz
+        window.onload = yorumlariYukle;
+
+    </script>
+</body>
+</html>
