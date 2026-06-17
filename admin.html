@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <title>Yönetim Paneli | Kaya Makina</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-slate-100 flex h-screen overflow-hidden font-sans">
+
+    <aside class="w-64 bg-slate-900 text-white flex flex-col shadow-2xl z-20">
+        <div class="p-6 border-b border-slate-800 text-center">
+            <h1 class="text-xl font-black tracking-widest text-blue-500">KAYA MAKİNA</h1>
+            <p class="text-xs text-slate-400 mt-1 uppercase">Sistem Yöneticisi</p>
+        </div>
+        <nav class="flex-grow p-4 flex flex-col space-y-2">
+            <a href="/admin" class="flex items-center gap-3 bg-blue-600 text-white p-3 rounded-lg font-bold shadow-md">
+                <i class="fa-solid fa-database"></i> Envanter Yönetimi
+            </a>
+            <a href="/" target="_blank" class="flex items-center gap-3 text-slate-400 hover:text-white hover:bg-slate-800 p-3 rounded-lg font-bold transition">
+                <i class="fa-solid fa-globe"></i> Siteye Git
+            </a>
+            
+            <a href="/cikis" class="flex items-center gap-3 text-red-400 hover:text-white hover:bg-red-500 p-3 rounded-lg font-bold transition mt-auto">
+                <i class="fa-solid fa-right-from-bracket"></i> Çıkış Yap
+            </a>
+        </nav>
+        <div class="p-4 border-t border-slate-800 text-center text-xs text-slate-500">
+            Güvenli Bağlantı Aktif
+        </div>
+    </aside>
+
+    <main class="flex-1 overflow-y-auto p-8 relative">
+        <div class="max-w-6xl mx-auto">
+            
+            <header class="mb-8 flex justify-between items-end">
+                <div>
+                    <h2 class="text-3xl font-black text-slate-800">Envanter Yönetimi</h2>
+                    <p class="text-slate-500 font-medium">Yeni makine ekle veya mevcut olanları sil.</p>
+                </div>
+                <div class="bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-bold text-sm">
+                    Toplam İlan: {{ makineler|length }}
+                </div>
+            </header>
+
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="mb-8 p-4 rounded-xl text-sm font-bold flex items-center shadow-md animate-bounce
+                            {% if category == 'success' %} bg-green-100 text-green-800 border-l-4 border-green-500
+                            {% elif category == 'error' %} bg-red-100 text-red-800 border-l-4 border-red-500
+                            {% else %} bg-blue-100 text-blue-800 border-l-4 border-blue-500 {% endif %}">
+                            <i class="fa-solid {% if category == 'success' %}fa-circle-check{% else %}fa-trash-can{% endif %} mr-3 text-2xl"></i> 
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-10">
+                <h3 class="text-lg font-bold text-slate-800 border-b pb-3 mb-5"><i class="fa-solid fa-plus-circle text-blue-600 mr-2"></i> Yeni Makine İlanı Ekle</h3>
+                
+                <form action="/admin/ekle" method="POST" enctype="multipart/form-data" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+                    
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Kategori</label>
+                        <select name="kategori_id" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium" required>
+                            <option value="">Seçiniz...</option>
+                            {% for kategori in kategoriler %}
+                                <option value="{{ kategori.id }}">{{ kategori.kategori_adi }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Makine Adı</label>
+                        <input type="text" name="makine_adi" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium" placeholder="Örn: 2 Metre Torna" required>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fiyat</label>
+                        <input type="number" name="fiyat" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium" placeholder="150000" required>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Birim & Yıl</label>
+                        <div class="flex gap-2">
+                            <select name="para_birimi" class="w-1/2 p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium" required>
+                                <option value="TL">TL</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                            <input type="text" name="model_yili" class="w-1/2 p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium" placeholder="2023" required>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Makine Fotoğrafı</label>
+                        <input type="file" name="foto" accept=".jpg, .jpeg, .png" class="w-full p-2 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium text-xs file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <button type="submit" class="w-full bg-green-600 text-white p-3 rounded-lg font-bold hover:bg-green-700 transition shadow-md">
+                            Kaydet
+                        </button>
+                    </div>
+                </form>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-10">
+                <h3 class="text-lg font-bold text-slate-800 border-b pb-3 mb-5"><i class="fa-solid fa-screwdriver-wrench text-blue-600 mr-2"></i> Yedek Parça Ekle</h3>
+                
+                <form action="/admin/yedek_ekle" method="POST" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-4 items-end">
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Hangi Makineye Ait?</label>
+                        <select name="makine_id" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium" required>
+                            <option value="">Makine Seç...</option>
+                            {% for makine in makineler %}
+                                <option value="{{ makine.id }}">{{ makine.makine_adi }}</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <div class="lg:col-span-2">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Parça Adı</label>
+                        <input type="text" name="parca_adi" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium" placeholder="Örn: 3 Ayaklı Ayna, Soğutma Pompası" required>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Fiyat</label>
+                        <input type="number" name="fiyat" class="w-full p-3 border rounded-lg bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none font-medium" placeholder="2500" required>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <label class="block text-xs font-bold text-slate-500 uppercase mb-2">Birim & Stok</label>
+                        <div class="flex gap-2">
+                            <select name="para_birimi" class="w-1/2 p-3 border rounded-lg bg-slate-50 outline-none font-medium" required>
+                                <option value="TL">TL</option>
+                                <option value="EUR">EUR</option>
+                            </select>
+                            <select name="stok_durumu" class="w-1/2 p-3 border rounded-lg bg-slate-50 outline-none font-medium" required>
+                                <option value="Stokta">Stokta</option>
+                                <option value="3 Gün">3 Gün</option>
+                                <option value="Siparişe Özel">Siparişe Özel</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="lg:col-span-1">
+                        <button type="submit" class="w-full bg-blue-600 text-white p-3 rounded-lg font-bold hover:bg-blue-700 transition shadow-md">
+                            Parçayı Ekle
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 text-slate-500 text-xs uppercase tracking-widest border-b">
+                            <th class="p-4 font-bold">ID</th>
+                            <th class="p-4 font-bold">Sahibi</th>
+                            <th class="p-4 font-bold">Kategori</th>
+                            <th class="p-4 font-bold">Makine Adı</th>
+                            <th class="p-4 font-bold">Fiyat</th>
+                            <th class="p-4 font-bold text-right">İşlem</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm font-medium text-slate-700">
+                        {% for makine in makineler %}
+                        <tr class="border-b hover:bg-slate-50 transition">
+                            <td class="p-4 text-slate-400">#00{{ makine.id }}</td>
+                            
+                            <td class="p-4">
+                                {% if makine.kullanici_id == 0 %}
+                                    <span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-[10px] font-black uppercase">Kaya Makina</span>
+                                {% else %}
+                                    <span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-[10px] font-black uppercase">{{ makine.satici_adi }}</span>
+                                {% endif %}
+                            </td>
+
+                            <td class="p-4"><span class="bg-slate-200 text-slate-700 px-2 py-1 rounded text-xs font-bold">{{ makine.kategori_adi }}</span></td>
+                            <td class="p-4 text-blue-900 font-bold">{{ makine.makine_adi }}</td>
+                            <td class="p-4">{{ "{:,.0f}".format(makine.fiyat) }} {{ makine.para_birimi }}</td>
+                            
+                            <td class="p-4 text-right flex justify-end items-center gap-4">
+                                
+                                <form action="/admin/foto_guncelle/{{ makine.id }}" method="POST" enctype="multipart/form-data" class="flex items-center gap-1">
+                                    <input type="file" name="foto_guncel" accept=".jpg, .jpeg, .png" class="w-24 text-[10px] file:mr-2 file:py-1 file:px-2 file:rounded file:border-0 file:text-[10px] file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" required>
+                                    <button type="submit" class="text-blue-500 hover:text-white hover:bg-blue-500 border border-blue-500 px-2 py-1 rounded transition text-xs" title="Fotoğraf Yükle/Güncelle">
+                                        <i class="fa-solid fa-camera"></i>
+                                    </button>
+                                </form>
+
+                                <form action="/admin/sil/{{ makine.id }}" method="POST" onsubmit="return confirm('Bu makineyi veri tabanından tamamen silmek istediğinize emin misiniz? Bu işlem geri alınamaz!');">
+                                    <button type="submit" class="text-red-500 hover:text-white hover:bg-red-500 border border-red-500 px-3 py-1 rounded transition text-xs font-bold uppercase">
+                                        Sil
+                                    </button>
+                                </form>
+                                
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+        </div>
+    </main>
+
+</body>
+</html>
